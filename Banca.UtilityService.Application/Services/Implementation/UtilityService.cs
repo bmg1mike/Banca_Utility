@@ -37,7 +37,8 @@ public class UtilityService : IUtilityService
 
             requestMessage.Headers.Add("ApiKey", "wrqewtreyrutyterewrtretre");
             var encryptedPayload = encryptionService.EncryptAes(JsonConvert.SerializeObject(payload), configuration["AesSecretKey"], configuration["AesInitializationVector"]);
-            requestMessage.Content = new StringContent(encryptedPayload, Encoding.UTF8, "application/json");
+            var payloadToSend = new {data = encryptedPayload};
+            requestMessage.Content = new StringContent(JsonConvert.SerializeObject(payloadToSend), Encoding.UTF8, "application/json");
             var client = clientFactory.CreateClient("Utility");
             var response = await client.SendAsync(requestMessage);
             var result = await response.Content.ReadAsStringAsync();
@@ -71,7 +72,8 @@ public class UtilityService : IUtilityService
 
             requestMessage.Headers.Add("ApiKey", "wrqewtreyrutyterewrtretre");
             var encryptedPayload = encryptionService.EncryptAes(JsonConvert.SerializeObject(request), configuration["AesSecretKey"], configuration["AesInitializationVector"]);
-            requestMessage.Content = new StringContent(encryptedPayload, Encoding.UTF8, "application/json");
+            var payloadToSend = new {data = encryptedPayload};
+            requestMessage.Content = new StringContent(JsonConvert.SerializeObject(payloadToSend), Encoding.UTF8, "application/json");
             var client = clientFactory.CreateClient("Utility");
             var response = await client.SendAsync(requestMessage);
             var result = await response.Content.ReadAsStringAsync();
