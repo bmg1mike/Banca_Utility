@@ -26,6 +26,12 @@ namespace Banca.UtilityService.API.Controllers
         {
             return Ok(await service.ValidateOtp(request));
         }
+
+        [HttpGet("GetBranches")]
+        public async Task<IActionResult> GetBranches()
+        {
+            return Ok(await service.GetBranches());
+        }
     }
 
 }

@@ -96,4 +96,41 @@ public class UtilityService : IUtilityService
             return Result<string>.Failure("Unable to validate OTP, please try again");
         }
     }
+
+    public async Task<Result<List<SterlingBranchDto>>> GetBranches()
+    {
+        try
+        {
+            var url = $"{configuration["CamsUrl"]}GetSterlingBranches";
+
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
+
+
+            requestMessage.Headers.Add("ApiKey", "wrqewtreyrutyterewrtretre");
+            // var encryptedPayload = encryptionService.EncryptAes(JsonConvert.SerializeObject(request), configuration["AesSecretKey"], configuration["AesInitializationVector"]);
+            // var payloadToSend = new {data = encryptedPayload};
+            // requestMessage.Content = new StringContent(JsonConvert.SerializeObject(payloadToSend), Encoding.UTF8, "application/json");
+            var client = clientFactory.CreateClient("Utility");
+            var response = await client.SendAsync(requestMessage);
+            var result = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var decryptedData = encryptionService.DecryptAes(result, configuration["AesSecretKey"], configuration["AesInitializationVector"]);
+                var data = JsonConvert.DeserializeObject<SterlingBranchList>(decryptedData);
+                if (data?.ResponseCode == "00")
+                {
+                    return Result<List<SterlingBranchDto>>.Success(data.SterlingBranches);
+                }
+            }
+
+            return Result<List<SterlingBranchDto>>.Failure("Unable to get branches, please try again");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, ex.Message);
+            return Result<List<SterlingBranchDto>>.Failure("Unable to get branches, please try again");
+            
+        }
+    }
 }

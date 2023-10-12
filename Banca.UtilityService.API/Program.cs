@@ -11,7 +11,6 @@ builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider servicePro
     config.ReadFrom
         .Configuration(context.Configuration)
         .ReadFrom.Services(serviceProvider);
-
 });
 // Add services to the container.
 builder.Services.AddHttpClient("Utility").AddTransientHttpErrorPolicy(x => x.WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(medianFirstRetryDelay: TimeSpan.FromSeconds(builder.Configuration.GetValue<double>("PollyConfig:RetryTime")), retryCount: builder.Configuration.GetValue<int>("PollyConfig:RetryCount"))))
